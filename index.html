@@ -3,366 +3,909 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LinkList · Database JSON</title>
+  <title>LinkTree Premium</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: linear-gradient(145deg, #f7f9fc 0%, #eef2f7 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 1rem; }
-    .container { max-width: 720px; width: 100%; background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border-radius: 48px; padding: 2rem 1.8rem; border: 1px solid rgba(255,255,255,0.5); }
-    h1 { font-size: 2rem; font-weight: 600; color: #0b1b2f; margin-bottom: 0.2rem; }
-    .subhead { font-size: 0.95rem; color: #4a5b6e; margin-bottom: 2rem; border-left: 4px solid #3b82f6; padding-left: 1rem; background: rgba(59,130,246,0.06); border-radius: 0 12px 12px 0; }
-    .form-card { background: white; border-radius: 28px; padding: 1.5rem 1.2rem; margin-bottom: 2.2rem; }
-    .input-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .input-group input { flex: 1 1 140px; padding: 0.85rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 60px; font-size: 0.95rem; background: #fafcff; outline: none; }
-    .input-group input:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.12); }
-    .btn { border: none; padding: 0.85rem 1.6rem; border-radius: 60px; font-weight: 600; font-size: 0.95rem; color: white; cursor: pointer; transition: 0.2s; background: #1e293b; }
-    .btn:hover { background: #0f172a; transform: scale(0.97); }
-    .btn-danger { background: #f1f5f9; color: #b91c1c; padding: 0.5rem 1rem; font-size: 0.8rem; }
-    .btn-danger:hover { background: #fee2e2; }
-    .btn-success { background: #dcfce7; color: #166534; padding: 0.5rem 1rem; font-size: 0.8rem; }
-    .btn-success:hover { background: #bbf7d0; }
-    .link-list-header { display: flex; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; }
-    .link-list-header h2 { font-size: 1.3rem; color: #0b1b2f; }
-    .link-counter { background: #e2e8f0; padding: 0.2rem 0.8rem; border-radius: 40px; font-size: 0.75rem; font-weight: 500; }
-    .link-grid { display: flex; flex-direction: column; gap: 0.7rem; }
-    .link-item { background: white; border-radius: 60px; padding: 0.4rem 0.4rem 0.4rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; border: 1px solid #eef2f7; }
-    .link-title { font-weight: 600; color: #0b1b2f; }
-    .link-url { font-size: 0.8rem; color: #4b5b70; text-decoration: none; word-break: break-all; }
-    .link-url:hover { color: #2563eb; }
-    .link-actions { display: flex; gap: 0.3rem; }
-    .empty-state { background: #f8fafc; border-radius: 60px; padding: 2rem 1.5rem; text-align: center; color: #64748b; border: 1.5px dashed #dce2ec; }
-    .empty-state span { display: block; font-size: 2rem; margin-bottom: 0.3rem; }
-    .footer-actions { margin-top: 1.8rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem; }
-    .toast-message { background: rgba(11,27,47,0.9); color: white; padding: 0.6rem 1.2rem; border-radius: 60px; position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.25s ease; pointer-events: none; z-index: 999; }
-    .toast-message.show { opacity: 1; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transition: background 0.5s ease;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    body.dark-mode {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    }
+
+    .container {
+      max-width: 720px;
+      width: 100%;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 40px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    body.dark-mode .container {
+      background: rgba(20,20,40,0.92);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* Header Controls */
+    .header-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .btn-toggle {
+      background: rgba(0,0,0,0.05);
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 60px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #1a202c;
+    }
+
+    body.dark-mode .btn-toggle {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    .btn-toggle:hover { transform: scale(0.95); }
+
+    .btn-admin {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 60px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-admin:hover { transform: scale(0.95); opacity: 0.9; }
+
+    /* Profile */
+    .profile { text-align: center; margin-bottom: 2.5rem; }
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid white;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      margin-bottom: 1rem;
+      transition: transform 0.3s ease;
+    }
+    .profile-avatar:hover { transform: scale(1.05) rotate(-2deg); }
+    .profile-name {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #1a202c;
+      margin-bottom: 0.3rem;
+    }
+    body.dark-mode .profile-name { color: #fff; }
+    .profile-bio {
+      color: #4a5568;
+      font-size: 1rem;
+    }
+    body.dark-mode .profile-bio { color: #a0aec0; }
+    .profile-badge {
+      display: inline-block;
+      background: rgba(102,126,234,0.15);
+      color: #667eea;
+      padding: 0.2rem 1rem;
+      border-radius: 60px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    body.dark-mode .profile-badge { background: rgba(102,126,234,0.2); }
+
+    /* Social */
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+    .social-link {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4a5568;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    body.dark-mode .social-link {
+      background: rgba(255,255,255,0.08);
+      color: #a0aec0;
+    }
+    .social-link:hover {
+      transform: translateY(-3px) scale(1.05);
+      background: #667eea;
+      color: white;
+    }
+
+    /* Links */
+    .links-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .link-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background: white;
+      border-radius: 20px;
+      text-decoration: none;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      position: relative;
+      overflow: hidden;
+    }
+    body.dark-mode .link-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .link-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 20px;
+    }
+    .link-card:hover::before { opacity: 0.08; }
+    .link-card:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 12px 30px rgba(102,126,234,0.25);
+      border-color: #667eea;
+    }
+
+    .link-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      background: rgba(102,126,234,0.1);
+      color: #667eea;
+      transition: all 0.3s ease;
+      z-index: 1;
+    }
+    .link-card:hover .link-icon {
+      background: #667eea;
+      color: white;
+      transform: scale(1.05);
+    }
+    body.dark-mode .link-icon { background: rgba(102,126,234,0.2); }
+
+    .link-content {
+      flex: 1;
+      z-index: 1;
+    }
+    .link-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #1a202c;
+      display: block;
+    }
+    body.dark-mode .link-title { color: #fff; }
+    .link-url {
+      font-size: 0.8rem;
+      color: #718096;
+      opacity: 0.7;
+      word-break: break-all;
+    }
+    body.dark-mode .link-url { color: #a0aec0; }
+    .link-arrow {
+      color: #a0aec0;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      z-index: 1;
+    }
+    .link-card:hover .link-arrow {
+      transform: translateX(4px);
+      color: #667eea;
+    }
+
+    /* Admin Panel (Modal) */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: 32px;
+      padding: 2.5rem 2rem;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+    }
+
+    body.dark-mode .modal {
+      background: #1a1a2e;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a202c;
+    }
+    body.dark-mode .modal-title { color: #fff; }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #a0aec0;
+      transition: color 0.3s ease;
+    }
+    .modal-close:hover { color: #e53e3e; }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #4a5568;
+      margin-bottom: 0.3rem;
+    }
+    body.dark-mode .form-group label { color: #a0aec0; }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      background: #f7fafc;
+    }
+    body.dark-mode .form-control {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    .btn-primary:hover { transform: scale(0.98); opacity: 0.9; }
+
+    .btn-danger {
+      background: #fc8181;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.8rem;
+    }
+    .btn-danger:hover { background: #e53e3e; }
+
+    .link-item-admin {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background: #f7fafc;
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+    }
+    body.dark-mode .link-item-admin {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .link-item-admin .info {
+      flex: 1;
+    }
+    .link-item-admin .info .title {
+      font-weight: 600;
+      color: #1a202c;
+    }
+    body.dark-mode .link-item-admin .info .title { color: #fff; }
+    .link-item-admin .info .url {
+      font-size: 0.8rem;
+      color: #718096;
+    }
+    body.dark-mode .link-item-admin .info .url { color: #a0aec0; }
+
+    .link-item-admin .actions {
+      display: flex;
+      gap: 0.3rem;
+    }
+
+    .btn-edit {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 0.3rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .btn-edit:hover { opacity: 0.8; }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: #718096;
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+
+    /* Footer */
+    .footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 1.5rem;
+    }
+    body.dark-mode .footer { border-top-color: rgba(255,255,255,0.08); }
+    .footer-text {
+      font-size: 0.8rem;
+      color: #718096;
+      opacity: 0.6;
+    }
+    .footer-text i { color: #e53e3e; animation: heartbeat 1.5s infinite; }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.75rem 1.5rem;
+      border-radius: 60px;
+      font-weight: 500;
+      z-index: 2000;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      background: #1a202c;
+      color: white;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-0.5rem);
+    }
+    .toast.success { background: #48bb78; }
+    .toast.error { background: #fc8181; }
+
+    /* Loading */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(102,126,234,0.1);
+      border-radius: 50%;
+      border-top-color: #667eea;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     @media (max-width: 550px) {
-      .container { padding: 1.5rem 1rem; }
-      .input-group { flex-direction: column; }
-      .btn { width: 100%; justify-content: center; }
-      .link-item { flex-direction: column; align-items: stretch; padding: 0.8rem; }
-      .link-actions { justify-content: flex-end; margin-top: 0.3rem; }
+      .container { padding: 1.5rem 1.2rem; border-radius: 28px; }
+      .profile-avatar { width: 90px; height: 90px; }
+      .profile-name { font-size: 1.4rem; }
+      .link-card { padding: 0.8rem 1.2rem; }
+      .link-icon { width: 40px; height: 40px; font-size: 1.2rem; }
+      .modal { padding: 1.5rem; }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <header>
-    <h1>📎 LinkList</h1>
-    <div class="subhead">database dari data.json</div>
-  </header>
-
-  <div class="form-card">
-    <form id="linkForm" class="input-group">
-      <input type="text" id="titleInput" placeholder="Judul" required>
-      <input type="url" id="linkInput" placeholder="https://" required>
-      <button type="submit" class="btn">➕ Tambah</button>
-    </form>
-    <small style="color:#64748b; font-size:0.75rem; display:block; margin-top:0.5rem;">🔒 data disimpan di localStorage (hanya untuk Anda)</small>
+  
+  <!-- Header Controls -->
+  <div class="header-controls">
+    <button class="btn-toggle" id="themeToggle">
+      <i class="fas fa-moon"></i> <span id="themeText">Mode Gelap</span>
+    </button>
+    <button class="btn-admin" id="adminToggle">
+      <i class="fas fa-cog"></i> Kelola Link
+    </button>
   </div>
 
-  <div class="link-list-header">
-    <h2>📋 Daftar Link</h2>
-    <span class="link-counter" id="linkCounter">0 tautan</span>
-  </div>
+  <!-- Profile -->
+  <div class="profile">
+    <img src="https://ui-avatars.com/api/?name=Your+Name&size=120&background=667eea&color=fff&bold=true" alt="Profile" class="profile-avatar" id="profileAvatar">
+    <h1 class="profile-name" id="profileName">Your Name</h1>
+    <p class="profile-bio" id="profileBio">👋 Halo! Selamat datang di link saya</p>
+    <span class="profile-badge">✨ LinkTree</span>
 
-  <div id="linkContainer" class="link-grid">
-    <div class="empty-state" id="emptyState">
-      <span>📭</span>
-      loading data dari data.json...
+    <div class="social-links">
+      <a href="#" class="social-link" id="socialInstagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" class="social-link" id="socialTwitter"><i class="fab fa-twitter"></i></a>
+      <a href="#" class="social-link" id="socialYoutube"><i class="fab fa-youtube"></i></a>
+      <a href="#" class="social-link" id="socialGithub"><i class="fab fa-github"></i></a>
     </div>
   </div>
 
-  <div class="footer-actions">
-    <div>
-      <button id="loadBtn" class="btn btn-success" type="button">📥 Muat dari data.json</button>
-      <button id="resetBtn" class="btn btn-danger" type="button">🔄 Reset ke default</button>
+  <!-- Links -->
+  <div id="linksContainer" class="links-container">
+    <div class="empty-state">
+      <i class="fas fa-link"></i>
+      <p>Memuat link...</p>
+      <div class="loading" style="margin-top:1rem;"></div>
     </div>
-    <button id="clearAllBtn" class="btn btn-danger" type="button">🗑️ Hapus semua</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p class="footer-text"><i class="fas fa-heart"></i> dibangun dengan cinta</p>
   </div>
 </div>
 
-<div id="toast" class="toast-message">✨ selesai</div>
+<!-- Admin Modal -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-cog"></i> Kelola Link</h2>
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+
+    <div id="adminLinks">
+      <!-- Links akan di-render di sini -->
+    </div>
+
+    <hr style="margin: 1.5rem 0; border-color: #e2e8f0;">
+
+    <h3 style="margin-bottom: 1rem; color: #1a202c;">Tambah Link Baru</h3>
+    <form id="addLinkForm">
+      <div class="form-group">
+        <label>Judul Link</label>
+        <input type="text" class="form-control" id="adminTitle" placeholder="Contoh: GitHub" required>
+      </div>
+      <div class="form-group">
+        <label>URL</label>
+        <input type="url" class="form-control" id="adminUrl" placeholder="https://github.com" required>
+      </div>
+      <div class="form-group">
+        <label>Icon (opsional)</label>
+        <input type="text" class="form-control" id="adminIcon" placeholder="fa-brands fa-github">
+        <small style="color: #718096;">Cari icon di <a href="https://fontawesome.com/icons" target="_blank">FontAwesome</a></small>
+      </div>
+      <button type="submit" class="btn-primary">➕ Tambah Link</button>
+    </form>
+
+    <hr style="margin: 1.5rem 0; border-color: #e2e8f0;">
+
+    <button class="btn-primary" id="saveChangesBtn" style="background: #48bb78; margin-bottom: 0.5rem;">
+      💾 Simpan Perubahan ke GitHub
+    </button>
+    <small style="display: block; color: #718096; text-align: center;">
+      Perubahan akan langsung terlihat oleh semua pengguna
+    </small>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <script>
   (function() {
     'use strict';
 
-    let links = [];
-    let isDefaultData = false;
+    // ===== KONFIGURASI =====
+    const CONFIG = {
+      profile: {
+        name: 'Your Name',
+        bio: '👋 Halo! Selamat datang di link saya',
+        avatar: 'https://ui-avatars.com/api/?name=Your+Name&size=120&background=667eea&color=fff&bold=true'
+      },
+      social: {
+        instagram: 'https://instagram.com/username',
+        twitter: 'https://twitter.com/username',
+        youtube: 'https://youtube.com/@username',
+        github: 'https://github.com/username'
+      }
+    };
 
-    // DOM refs
-    const form = document.getElementById('linkForm');
-    const titleInput = document.getElementById('titleInput');
-    const linkInput = document.getElementById('linkInput');
-    const linkContainer = document.getElementById('linkContainer');
-    const emptyState = document.getElementById('emptyState');
-    const linkCounter = document.getElementById('linkCounter');
-    const clearAllBtn = document.getElementById('clearAllBtn');
-    const loadBtn = document.getElementById('loadBtn');
-    const resetBtn = document.getElementById('resetBtn');
+    // ===== STATE =====
+    let links = [];
+    let editingIndex = -1;
+    let isDarkMode = localStorage.getItem('linktree_darkmode') === 'true';
+
+    // ===== DOM REFS =====
+    const container = document.getElementById('linksContainer');
+    const adminModal = document.getElementById('adminModal');
+    const adminLinks = document.getElementById('adminLinks');
+    const addLinkForm = document.getElementById('addLinkForm');
+    const saveBtn = document.getElementById('saveChangesBtn');
+    const themeToggle = document.getElementById('themeToggle');
+    const themeText = document.getElementById('themeText');
     const toast = document.getElementById('toast');
 
-    // Default data
-    const DEFAULT_LINKS = [
-      { id: 'gh', title: 'GitHub', url: 'https://github.com' },
-      { id: 'yt', title: 'YouTube', url: 'https://youtube.com' },
-      { id: 'tw', title: 'Twitter / X', url: 'https://twitter.com' },
-    ];
+    // ===== FUNGSI =====
 
-    // Helper: save ke localStorage
-    function saveToStorage() {
-      try {
-        localStorage.setItem('linklist_data', JSON.stringify(links));
-      } catch (_) {}
-    }
-
-    // Helper: load dari localStorage
-    function loadFromStorage() {
-      try {
-        const raw = localStorage.getItem('linklist_data');
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed) && parsed.length) {
-            links = parsed;
-            return true;
-          }
-        }
-      } catch (_) {}
-      return false;
-    }
-
-    // Generate ID
-    function generateId() {
-      return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-    }
-
-    // Render
-    function renderLinks() {
-      while (linkContainer.firstChild) {
-        linkContainer.removeChild(linkContainer.firstChild);
-      }
-
-      if (links.length === 0) {
-        const emptyClone = emptyState.cloneNode(true);
-        emptyClone.id = 'emptyState';
-        emptyClone.innerHTML = `<span>📭</span>belum ada link, tambahkan sekarang!`;
-        linkContainer.appendChild(emptyClone);
-        linkCounter.textContent = '0 tautan';
-        return;
-      }
-
-      linkCounter.textContent = links.length + ' tautan';
-
-      links.forEach((item) => {
-        const linkItem = document.createElement('div');
-        linkItem.className = 'link-item';
-
-        const infoDiv = document.createElement('div');
-        infoDiv.style.display = 'flex';
-        infoDiv.style.flexWrap = 'wrap';
-        infoDiv.style.alignItems = 'center';
-        infoDiv.style.gap = '0.3rem 0.8rem';
-        infoDiv.style.flex = '1';
-
-        const titleSpan = document.createElement('span');
-        titleSpan.className = 'link-title';
-        titleSpan.textContent = item.title || 'Tanpa judul';
-
-        const urlAnchor = document.createElement('a');
-        urlAnchor.className = 'link-url';
-        urlAnchor.href = item.url;
-        urlAnchor.target = '_blank';
-        urlAnchor.rel = 'noopener noreferrer';
-        urlAnchor.textContent = item.url;
-
-        infoDiv.appendChild(titleSpan);
-        infoDiv.appendChild(urlAnchor);
-
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'link-actions';
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'btn btn-danger';
-        deleteBtn.textContent = 'Hapus';
-        deleteBtn.setAttribute('type', 'button');
-        deleteBtn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          deleteLinkById(item.id);
-        });
-
-        actionsDiv.appendChild(deleteBtn);
-        linkItem.appendChild(infoDiv);
-        linkItem.appendChild(actionsDiv);
-
-        linkContainer.appendChild(linkItem);
-      });
-    }
-
-    // Delete
-    function deleteLinkById(id) {
-      links = links.filter(link => link.id !== id);
-      saveToStorage();
-      renderLinks();
-      showToast('🗑️ link dihapus');
-    }
-
-    // Add
-    function addLink(title, url) {
-      const cleanTitle = title.trim();
-      let cleanUrl = url.trim();
-
-      if (!cleanTitle) {
-        showToast('⚠️ judul tidak boleh kosong', true);
-        return false;
-      }
-      if (!cleanUrl) {
-        showToast('⚠️ URL tidak boleh kosong', true);
-        return false;
-      }
-      if (!/^https?:\/\//i.test(cleanUrl)) {
-        cleanUrl = 'https://' + cleanUrl;
-      }
-      try {
-        new URL(cleanUrl);
-      } catch (_) {
-        showToast('⚠️ format URL tidak valid', true);
-        return false;
-      }
-
-      const newLink = {
-        id: generateId(),
-        title: cleanTitle,
-        url: cleanUrl,
-      };
-
-      links.push(newLink);
-      saveToStorage();
-      renderLinks();
-      showToast('✅ link tersimpan!');
-      return true;
-    }
-
-    // Clear all
-    function clearAllLinks() {
-      if (links.length === 0) {
-        showToast('📭 sudah kosong', true);
-        return;
-      }
-      if (window.confirm('Hapus semua link yang tersimpan?')) {
-        links = [];
-        saveToStorage();
-        renderLinks();
-        showToast('🧹 semua link dihapus');
-      }
-    }
-
-    // Load from data.json
-    function loadFromJSON() {
-      showToast('📥 memuat data.json...');
-      fetch('data.json')
+    // Load data dari data.json
+    function loadLinks() {
+      fetch('data.json?t=' + Date.now())
         .then(response => {
-          if (!response.ok) {
-            throw new Error('data.json tidak ditemukan! Buat file data.json di repository.');
-          }
+          if (!response.ok) throw new Error('data.json tidak ditemukan');
           return response.json();
         })
         .then(data => {
-          if (!Array.isArray(data)) {
-            throw new Error('Format data.json harus array');
-          }
-          const valid = data.every(item => item.title && item.url);
-          if (!valid) {
-            throw new Error('Data harus punya title & url');
-          }
-
-          // Generate ID baru
-          const newLinks = data.map(item => ({
-            id: generateId(),
-            title: item.title,
-            url: item.url,
+          if (!Array.isArray(data)) throw new Error('Format data harus array');
+          links = data.map(item => ({
+            id: item.id || Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+            title: item.title || 'Link',
+            url: item.url || '#',
+            icon: item.icon || getDefaultIcon(item.title)
           }));
-
-          links = newLinks;
-          saveToStorage();
-          renderLinks();
-          showToast('✅ berhasil muat ' + links.length + ' link dari data.json');
+          renderAll();
+          showToast('✅ Data dimuat dari server', 'success');
         })
         .catch(error => {
-          showToast('⚠️ ' + error.message, true);
-          console.error(error);
+          console.warn('Gagal load data.json, pakai default:', error);
+          links = getDefaultLinks();
+          renderAll();
+          showToast('⚠️ Pakai data default (data.json tidak ditemukan)', 'error');
         });
     }
 
-    // Reset ke default
-    function resetToDefault() {
-      if (window.confirm('Reset ke data default?')) {
-        links = DEFAULT_LINKS.map(item => ({
-          id: generateId(),
-          title: item.title,
-          url: item.url,
-        }));
-        saveToStorage();
-        renderLinks();
-        showToast('🔄 reset ke default');
-      }
+    // Default links
+    function getDefaultLinks() {
+      return [
+        { id: '1', title: 'GitHub', url: 'https://github.com', icon: 'fa-brands fa-github' },
+        { id: '2', title: 'YouTube', url: 'https://youtube.com', icon: 'fa-brands fa-youtube' },
+        { id: '3', title: 'Twitter', url: 'https://twitter.com', icon: 'fa-brands fa-twitter' },
+        { id: '4', title: 'Instagram', url: 'https://instagram.com', icon: 'fa-brands fa-instagram' },
+      ];
     }
 
-    // Toast
-    let toastTimeout = null;
-
-    function showToast(message, isWarning = false) {
-      toast.textContent = message;
-      toast.style.background = isWarning ? 'rgba(180, 40, 40, 0.92)' : 'rgba(11, 27, 47, 0.92)';
-      toast.classList.add('show');
-
-      if (toastTimeout) {
-        clearTimeout(toastTimeout);
-        toastTimeout = null;
+    // Get icon berdasarkan judul
+    function getDefaultIcon(title) {
+      const icons = {
+        'github': 'fa-brands fa-github',
+        'youtube': 'fa-brands fa-youtube',
+        'twitter': 'fa-brands fa-twitter',
+        'instagram': 'fa-brands fa-instagram',
+        'facebook': 'fa-brands fa-facebook',
+        'linkedin': 'fa-brands fa-linkedin',
+        'tiktok': 'fa-brands fa-tiktok',
+        'whatsapp': 'fa-brands fa-whatsapp',
+        'telegram': 'fa-brands fa-telegram',
+        'discord': 'fa-brands fa-discord',
+        'spotify': 'fa-brands fa-spotify',
+        'google': 'fa-brands fa-google',
+        'email': 'fa-solid fa-envelope',
+        'website': 'fa-solid fa-globe',
+        'blog': 'fa-solid fa-blog'
+      };
+      const lower = title.toLowerCase();
+      for (const [key, icon] of Object.entries(icons)) {
+        if (lower.includes(key)) return icon;
       }
-
-      toastTimeout = setTimeout(() => {
-        toast.classList.remove('show');
-        toastTimeout = null;
-      }, 2500);
+      return 'fa-solid fa-link';
     }
 
-    // Event listeners
-    form.addEventListener('submit', function(e) {
+    // Render semua (links + admin)
+    function renderAll() {
+      renderLinks();
+      renderAdminLinks();
+    }
+
+    // Render links (public view)
+    function renderLinks() {
+      container.innerHTML = '';
+      if (!links || links.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-link"></i>
+            <p>Belum ada link</p>
+          </div>
+        `;
+        return;
+      }
+
+      links.forEach(link => {
+        const card = document.createElement('a');
+        card.className = 'link-card';
+        card.href = link.url;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+        card.innerHTML = `
+          <div class="link-icon"><i class="${link.icon || 'fa-solid fa-link'}"></i></div>
+          <div class="link-content">
+            <span class="link-title">${link.title}</span>
+            <span class="link-url">${link.url}</span>
+          </div>
+          <div class="link-arrow"><i class="fas fa-chevron-right"></i></div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Render admin links (modal)
+    function renderAdminLinks() {
+      adminLinks.innerHTML = '';
+      if (!links || links.length === 0) {
+        adminLinks.innerHTML = '<p style="color: #718096;">Belum ada link. Tambahkan di bawah!</p>';
+        return;
+      }
+
+      links.forEach((link, index) => {
+        const div = document.createElement('div');
+        div.className = 'link-item-admin';
+        div.innerHTML = `
+          <div class="info">
+            <div class="title">${link.title}</div>
+            <div class="url">${link.url}</div>
+          </div>
+          <div class="actions">
+            <button class="btn-edit" data-index="${index}">✏️ Edit</button>
+            <button class="btn-danger" data-index="${index}">Hapus</button>
+          </div>
+        `;
+        adminLinks.appendChild(div);
+
+        // Edit button
+        div.querySelector('.btn-edit').addEventListener('click', () => {
+          editingIndex = index;
+          document.getElementById('adminTitle').value = link.title;
+          document.getElementById('adminUrl').value = link.url;
+          document.getElementById('adminIcon').value = link.icon || '';
+          document.querySelector('#addLinkForm button').textContent = '✏️ Update Link';
+          document.querySelector('#addLinkForm button').style.background = 'linear-gradient(135deg, #f6ad55, #ed8936)';
+        });
+
+        // Delete button
+        div.querySelector('.btn-danger').addEventListener('click', () => {
+          if (confirm(`Hapus link "${link.title}"?`)) {
+            links.splice(index, 1);
+            renderAll();
+            showToast(`🗑️ "${link.title}" dihapus`, 'success');
+          }
+        });
+      });
+    }
+
+    // ===== SAVE KE GITHUB =====
+    function saveToGithub() {
+      if (links.length === 0) {
+        showToast('⚠️ Tidak ada data untuk disimpan!', 'error');
+        return;
+      }
+
+      // Konversi ke format sederhana untuk data.json
+      const dataToSave = links.map(link => ({
+        id: link.id,
+        title: link.title,
+        url: link.url,
+        icon: link.icon || getDefaultIcon(link.title)
+      }));
+
+      // Buat file JSON
+      const jsonStr = JSON.stringify(dataToSave, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      // Download file
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'data.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast('✅ File data.json diunduh! Upload ke GitHub.', 'success');
+      
+      // Tampilkan instruksi
+      setTimeout(() => {
+        showToast('📤 Upload data.json ke GitHub repository Anda', 'success');
+      }, 3000);
+    }
+
+    // ===== ADD/EDIT LINK =====
+    addLinkForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      const success = addLink(titleInput.value, linkInput.value);
-      if (success) {
-        titleInput.value = '';
-        linkInput.value = '';
-        titleInput.focus();
+      const title = document.getElementById('adminTitle').value.trim();
+      const url = document.getElementById('adminUrl').value.trim();
+      const icon = document.getElementById('adminIcon').value.trim() || getDefaultIcon(title);
+
+      if (!title || !url) {
+        showToast('⚠️ Judul dan URL wajib diisi!', 'error');
+        return;
       }
+
+      if (editingIndex >= 0) {
+        // Edit
+        links[editingIndex] = { id: links[editingIndex].id, title, url, icon };
+        editingIndex = -1;
+        document.querySelector('#addLinkForm button').textContent = '➕ Tambah Link';
+        document.querySelector('#addLinkForm button').style.background = '';
+        showToast('✏️ Link berhasil diupdate!', 'success');
+      } else {
+        // Add
+        links.push({
+          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+          title,
+          url,
+          icon
+        });
+        showToast('✅ Link berhasil ditambahkan!', 'success');
+      }
+
+      document.getElementById('adminTitle').value = '';
+      document.getElementById('adminUrl').value = '';
+      document.getElementById('adminIcon').value = '';
+      renderAll();
     });
 
-    clearAllBtn.addEventListener('click', clearAllLinks);
-    loadBtn.addEventListener('click', loadFromJSON);
-    resetBtn.addEventListener('click', resetToDefault);
-
-    // Init
-    if (!loadFromStorage()) {
-      links = DEFAULT_LINKS.map(item => ({
-        id: generateId(),
-        title: item.title,
-        url: item.url,
-      }));
-      saveToStorage();
+    // ===== DARK MODE =====
+    function applyTheme() {
+      if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        themeText.textContent = 'Mode Terang';
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i> <span id="themeText">Mode Terang</span>';
+      } else {
+        document.body.classList.remove('dark-mode');
+        themeText.textContent = 'Mode Gelap';
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i> <span id="themeText">Mode Gelap</span>';
+      }
     }
-    renderLinks();
-    titleInput.focus();
 
-    // Auto-load data.json jika ada
-    setTimeout(() => {
-      fetch('data.json')
-        .then(res => {
-          if (res.ok) {
-            // Ada data.json, tapi kita biarkan user yang klik tombol
-          }
-        })
-        .catch(() => {});
-    }, 500);
+    themeToggle.addEventListener('click', () => {
+      isDarkMode = !isDarkMode;
+      localStorage.setItem('linktree_darkmode', isDarkMode);
+      applyTheme();
+    });
+
+    // ===== ADMIN MODAL =====
+    document.getElementById('adminToggle').addEventListener('click', () => {
+      adminModal.classList.add('active');
+      renderAdminLinks();
+    });
+
+    document.getElementById('modalClose').addEventListener('click', () => {
+      adminModal.classList.remove('active');
+    });
+
+    adminModal.addEventListener('click', (e) => {
+      if (e.target === adminModal) adminModal.classList.remove('active');
+    });
+
+    // ===== SAVE BUTTON =====
+    saveBtn.addEventListener('click', saveToGithub);
+
+    // ===== TOAST =====
+    let toastTimeout;
+
+    function showToast(message, type = 'success') {
+      toast.textContent = message;
+      toast.className = 'toast ' + type;
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // ===== SETUP PROFIL =====
+    function setupProfile() {
+      document.getElementById('profileName').textContent = CONFIG.profile.name;
+      document.getElementById('profileBio').textContent = CONFIG.profile.bio;
+      document.getElementById('profileAvatar').src = CONFIG.profile.avatar;
+    }
+
+    // ===== SETUP SOCIAL =====
+    function setupSocial() {
+      const socialMap = {
+        instagram: document.getElementById('socialInstagram'),
+        twitter: document.getElementById('socialTwitter'),
+        youtube: document.getElementById('socialYoutube'),
+        github: document.getElementById('socialGithub')
+      };
+      for (const [key, element] of Object.entries(socialMap)) {
+        const url = CONFIG.social[key];
+        if (url && url !== '#') {
+          element.href = url;
+        } else {
+          element.style.display = 'none';
+        }
+      }
+    }
+
+    // ===== INIT =====
+    function init() {
+      setupProfile();
+      setupSocial();
+      applyTheme();
+      loadLinks();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
 
   })();
 </script>

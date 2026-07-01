@@ -1,17 +1,26 @@
 [
   {
-    "id": "gh",
+    "id": "github",
     "title": "GitHub",
-    "url": "https://github.com"
+    "url": "https://github.com",
+    "icon": "fa-brands fa-github"
   },
   {
-    "id": "yt",
+    "id": "youtube",
     "title": "YouTube",
-    "url": "https://youtube.com"
+    "url": "https://youtube.com",
+    "icon": "fa-brands fa-youtube"
   },
   {
-    "id": "tw",
-    "title": "Twitter / X",
-    "url": "https://twitter.com"
+    "id": "twitter",
+    "title": "Twitter",
+    "url": "https://twitter.com",
+    "icon": "fa-brands fa-twitter"
+  },
+  {
+    "id": "instagram",
+    "title": "Instagram",
+    "url": "https://instagram.com",
+    "icon": "fa-brands fa-instagram"
   }
 ]

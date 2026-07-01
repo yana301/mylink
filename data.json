@@ -1,0 +1,17 @@
+[
+  {
+    "id": "gh",
+    "title": "GitHub",
+    "url": "https://github.com"
+  },
+  {
+    "id": "yt",
+    "title": "YouTube",
+    "url": "https://youtube.com"
+  },
+  {
+    "id": "tw",
+    "title": "Twitter / X",
+    "url": "https://twitter.com"
+  }
+]

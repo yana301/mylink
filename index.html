@@ -3,27 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LinkTree · Auto Database</title>
+  <title>LinkTree · My Links</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     body {
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      transition: background 0.5s ease;
       padding: 1.5rem;
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: background 0.5s ease;
     }
-
     body.dark-mode {
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
     }
-
     .container {
       max-width: 720px;
       width: 100%;
@@ -33,22 +30,19 @@
       padding: 2.5rem 2rem;
       box-shadow: 0 30px 60px rgba(0,0,0,0.2);
       border: 1px solid rgba(255,255,255,0.2);
+      transition: background 0.3s ease;
     }
-
     body.dark-mode .container {
       background: rgba(20,20,40,0.92);
       border: 1px solid rgba(255,255,255,0.1);
     }
-
     .header-controls {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      justify-content: flex-end;
       margin-bottom: 1.5rem;
-      flex-wrap: wrap;
       gap: 0.5rem;
+      flex-wrap: wrap;
     }
-
     .btn-toggle {
       background: rgba(0,0,0,0.05);
       border: none;
@@ -58,19 +52,16 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
+      color: #1a202c;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: #1a202c;
     }
-
     body.dark-mode .btn-toggle {
       background: rgba(255,255,255,0.1);
       color: #fff;
     }
-
     .btn-toggle:hover { transform: scale(0.95); }
-
     .btn-admin {
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
@@ -85,32 +76,7 @@
       align-items: center;
       gap: 0.5rem;
     }
-
     .btn-admin:hover { transform: scale(0.95); opacity: 0.9; }
-
-    .btn-setup {
-      background: #f6ad55;
-      color: #1a202c;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 60px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      animation: pulse-btn 2s infinite;
-    }
-
-    @keyframes pulse-btn {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-    }
-
-    .btn-setup:hover { transform: scale(0.95); opacity: 0.9; }
-
     .profile { text-align: center; margin-bottom: 2.5rem; }
     .profile-avatar {
       width: 120px;
@@ -145,7 +111,9 @@
       font-weight: 600;
       margin-top: 0.5rem;
     }
-
+    body.dark-mode .profile-badge {
+      background: rgba(102,126,234,0.2);
+    }
     .social-links {
       display: flex;
       justify-content: center;
@@ -170,18 +138,16 @@
       color: #a0aec0;
     }
     .social-link:hover {
-      transform: translateY(-3px) scale(1.05);
       background: #667eea;
       color: white;
+      transform: translateY(-3px) scale(1.05);
     }
-
     .links-container {
       display: flex;
       flex-direction: column;
       gap: 0.8rem;
       margin-top: 0.5rem;
     }
-
     .link-card {
       display: flex;
       align-items: center;
@@ -200,7 +166,6 @@
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.08);
     }
-
     .link-card::before {
       content: '';
       position: absolute;
@@ -219,7 +184,6 @@
       box-shadow: 0 12px 30px rgba(102,126,234,0.25);
       border-color: #667eea;
     }
-
     .link-icon {
       width: 48px;
       height: 48px;
@@ -239,7 +203,9 @@
       color: white;
       transform: scale(1.05);
     }
-
+    body.dark-mode .link-icon {
+      background: rgba(102,126,234,0.2);
+    }
     .link-content {
       flex: 1;
       z-index: 1;
@@ -268,8 +234,41 @@
       transform: translateX(4px);
       color: #667eea;
     }
+    .footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 1.5rem;
+    }
+    body.dark-mode .footer { border-top-color: rgba(255,255,255,0.08); }
+    .footer-text {
+      font-size: 0.8rem;
+      color: #718096;
+      opacity: 0.6;
+    }
+    .footer-text i { color: #e53e3e; animation: heartbeat 1.5s infinite; }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: #718096;
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(102,126,234,0.1);
+      border-radius: 50%;
+      border-top-color: #667eea;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Modal */
+    /* Modal Admin */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -284,9 +283,7 @@
       align-items: center;
       padding: 1.5rem;
     }
-
     .modal-overlay.active { display: flex; }
-
     .modal {
       background: white;
       border-radius: 32px;
@@ -297,12 +294,10 @@
       overflow-y: auto;
       box-shadow: 0 30px 60px rgba(0,0,0,0.3);
     }
-
     body.dark-mode .modal {
       background: #1a1a2e;
       border: 1px solid rgba(255,255,255,0.1);
     }
-
     .modal-header {
       display: flex;
       justify-content: space-between;
@@ -315,7 +310,6 @@
       color: #1a202c;
     }
     body.dark-mode .modal-title { color: #fff; }
-
     .modal-close {
       background: none;
       border: none;
@@ -325,10 +319,7 @@
       transition: color 0.3s ease;
     }
     .modal-close:hover { color: #e53e3e; }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
+    .form-group { margin-bottom: 1rem; }
     .form-group label {
       display: block;
       font-weight: 600;
@@ -337,7 +328,6 @@
       margin-bottom: 0.3rem;
     }
     body.dark-mode .form-group label { color: #a0aec0; }
-
     .form-control {
       width: 100%;
       padding: 0.75rem 1rem;
@@ -357,7 +347,6 @@
       border-color: #667eea;
       box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
     }
-
     .btn-primary {
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
@@ -370,20 +359,6 @@
       width: 100%;
     }
     .btn-primary:hover { transform: scale(0.98); opacity: 0.9; }
-
-    .btn-success {
-      background: #48bb78;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      width: 100%;
-    }
-    .btn-success:hover { transform: scale(0.98); opacity: 0.9; }
-
     .btn-danger {
       background: #fc8181;
       color: white;
@@ -392,11 +367,9 @@
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
       font-size: 0.8rem;
     }
     .btn-danger:hover { background: #e53e3e; }
-
     .btn-edit {
       background: #667eea;
       color: white;
@@ -407,7 +380,6 @@
       font-size: 0.8rem;
     }
     .btn-edit:hover { opacity: 0.8; }
-
     .link-item-admin {
       display: flex;
       justify-content: space-between;
@@ -420,10 +392,7 @@
     body.dark-mode .link-item-admin {
       background: rgba(255,255,255,0.05);
     }
-
-    .link-item-admin .info {
-      flex: 1;
-    }
+    .link-item-admin .info { flex: 1; }
     .link-item-admin .info .title {
       font-weight: 600;
       color: #1a202c;
@@ -434,37 +403,7 @@
       color: #718096;
     }
     body.dark-mode .link-item-admin .info .url { color: #a0aec0; }
-
-    .link-item-admin .actions {
-      display: flex;
-      gap: 0.3rem;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1.5rem;
-      color: #718096;
-    }
-    .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
-
-    .footer {
-      margin-top: 2.5rem;
-      text-align: center;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 1.5rem;
-    }
-    body.dark-mode .footer { border-top-color: rgba(255,255,255,0.08); }
-    .footer-text {
-      font-size: 0.8rem;
-      color: #718096;
-      opacity: 0.6;
-    }
-    .footer-text i { color: #e53e3e; animation: heartbeat 1.5s infinite; }
-
-    @keyframes heartbeat {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-    }
+    .link-item-admin .actions { display: flex; gap: 0.3rem; }
 
     /* Toast */
     .toast {
@@ -492,68 +431,6 @@
     .toast.error { background: #fc8181; }
     .toast.loading { background: #667eea; }
 
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(102,126,234,0.1);
-      border-radius: 50%;
-      border-top-color: #667eea;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .status-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 0.5rem;
-    }
-    .status-dot.online { background: #48bb78; }
-    .status-dot.saving { background: #f6ad55; animation: pulse 1s infinite; }
-    .status-dot.error { background: #fc8181; }
-    .status-dot.offline { background: #a0aec0; }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .setup-info {
-      background: #ebf8ff;
-      border-left: 4px solid #3182ce;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      font-size: 0.85rem;
-      color: #2c5282;
-    }
-    body.dark-mode .setup-info {
-      background: rgba(49,130,206,0.15);
-      color: #90cdf4;
-    }
-
-    .setup-info a {
-      color: #3182ce;
-      font-weight: 600;
-    }
-    body.dark-mode .setup-info a { color: #63b3ed; }
-
-    .step-number {
-      display: inline-block;
-      width: 28px;
-      height: 28px;
-      background: #667eea;
-      color: white;
-      border-radius: 50%;
-      text-align: center;
-      line-height: 28px;
-      font-weight: 700;
-      font-size: 0.8rem;
-      margin-right: 0.5rem;
-    }
-
     @media (max-width: 550px) {
       .container { padding: 1.5rem 1.2rem; border-radius: 28px; }
       .profile-avatar { width: 90px; height: 90px; }
@@ -569,28 +446,19 @@
 <div class="container">
   
   <div class="header-controls">
-    <div>
-      <span class="status-dot offline" id="statusDot"></span>
-      <span style="font-size:0.8rem; color:#718096;" id="statusText">Memulai...</span>
-    </div>
-    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-      <button class="btn-toggle" id="themeToggle">
-        <i class="fas fa-moon"></i> <span id="themeText">Mode Gelap</span>
-      </button>
-      <button class="btn-setup" id="setupBtn">
-        <i class="fas fa-key"></i> Setup Database
-      </button>
-      <button class="btn-admin" id="adminToggle">
-        <i class="fas fa-cog"></i> Kelola Link
-      </button>
-    </div>
+    <button class="btn-toggle" id="themeToggle">
+      <i class="fas fa-moon"></i> <span id="themeText">Mode Gelap</span>
+    </button>
+    <button class="btn-admin" id="adminToggle">
+      <i class="fas fa-cog"></i> Kelola Link
+    </button>
   </div>
 
   <div class="profile">
     <img src="https://ui-avatars.com/api/?name=Your+Name&size=120&background=667eea&color=fff&bold=true" alt="Profile" class="profile-avatar" id="profileAvatar">
     <h1 class="profile-name" id="profileName">Your Name</h1>
     <p class="profile-bio" id="profileBio">👋 Halo! Selamat datang di link saya</p>
-    <span class="profile-badge" id="statusBadge">✨ Setup Database</span>
+    <span class="profile-badge">✨ LinkTree</span>
 
     <div class="social-links">
       <a href="#" class="social-link" id="socialInstagram"><i class="fab fa-instagram"></i></a>
@@ -610,45 +478,6 @@
 
   <div class="footer">
     <p class="footer-text"><i class="fas fa-heart"></i> Auto-sync database</p>
-  </div>
-</div>
-
-<!-- Setup Modal -->
-<div class="modal-overlay" id="setupModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2 class="modal-title"><i class="fas fa-key"></i> Setup Database</h2>
-      <button class="modal-close" id="setupModalClose">&times;</button>
-    </div>
-
-    <div class="setup-info">
-      <i class="fas fa-info-circle"></i> <strong>Cara termudah:</strong> klik tombol <strong>"Buat Bin Baru Otomatis"</strong> di bawah, cukup masukkan Access Key saja!
-      <br><br>
-      <small>Atau daftar di <a href="https://jsonbin.io" target="_blank">jsonbin.io</a>, buat bin, lalu copy Bin ID & Access Key.</small>
-    </div>
-
-    <form id="setupForm">
-      <div class="form-group">
-        <label>Access Key (wajib)</label>
-        <input type="text" class="form-control" id="setupAccessKey" placeholder="$2a$10$abcdefghijklmnopqrstuv" required>
-        <small style="color:#718096;">Dapatkan dari menu <strong>API Keys</strong> di JSONBin</small>
-      </div>
-      <div class="form-group">
-        <label>Bin ID (opsional - kosongkan jika ingin auto-create)</label>
-        <input type="text" class="form-control" id="setupBinId" placeholder="67f8a4b8e41b4d34e469c0e1">
-        <small style="color:#718096;">Kosongkan jika ingin membuat bin baru otomatis</small>
-      </div>
-      <button type="submit" class="btn-success">💾 Simpan & Uji Koneksi</button>
-    </form>
-
-    <hr style="margin: 1.5rem 0; border-color: #e2e8f0;">
-
-    <button class="btn-primary" id="createBinBtn" style="background: #ed8936;">
-      📦 Buat Bin Baru Otomatis
-    </button>
-    <small style="display: block; color: #718096; text-align: center; margin-top:0.5rem;">
-      Klik ini jika Anda belum punya bin di JSONBin (cukup punya Access Key)
-    </small>
   </div>
 </div>
 
@@ -681,20 +510,6 @@
       </div>
       <button type="submit" class="btn-primary" id="submitBtn">➕ Tambah Link</button>
     </form>
-
-    <hr style="margin: 1.5rem 0; border-color: #e2e8f0;">
-
-    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-      <button class="btn-primary" id="saveToJsonBinBtn" style="flex:1; background:#48bb78;">
-        💾 Simpan ke Database
-      </button>
-      <button class="btn-primary" id="loadFromJsonBinBtn" style="flex:1; background:#667eea;">
-        📥 Muat Ulang Data
-      </button>
-    </div>
-    <small style="display: block; color: #718096; text-align: center; margin-top:0.5rem;">
-      Perubahan otomatis tersimpan dan terlihat semua pengguna
-    </small>
   </div>
 </div>
 
@@ -704,34 +519,20 @@
   (function() {
     'use strict';
 
-    // ===== STATE =====
+    // ================================================================
+    // 🔑  HARCODE CONFIG DI SINI!
+    //    Ganti dengan Bin ID dan Access Key Anda dari JSONBin
+    // ================================================================
+    const JSONBIN_CONFIG = {
+      BIN_ID: '67f8a4b8e41b4d34e469c0e1',      // ← GANTI DENGAN BIN ID ANDA
+      ACCESS_KEY: '$2a$10$abcdefghijklmnopqrstuv' // ← GANTI DENGAN ACCESS KEY ANDA
+    };
+    // ================================================================
+
     let links = [];
     let editingIndex = -1;
     let isDarkMode = localStorage.getItem('linktree_darkmode') === 'true';
     let isSaving = false;
-
-    // ===== KONFIGURASI (disimpan di localStorage) =====
-    function getConfig() {
-      try {
-        const config = localStorage.getItem('linktree_config');
-        if (config) {
-          const parsed = JSON.parse(config);
-          if (parsed.accessKey) {
-            return parsed;
-          }
-        }
-      } catch (e) {}
-      return { binId: null, accessKey: null };
-    }
-
-    function saveConfig(binId, accessKey) {
-      localStorage.setItem('linktree_config', JSON.stringify({ binId, accessKey }));
-    }
-
-    function isConfigValid() {
-      const config = getConfig();
-      return config && config.accessKey && config.accessKey !== '';
-    }
 
     // ===== KONFIGURASI PROFIL =====
     const CONFIG = {
@@ -750,51 +551,24 @@
 
     // ===== DOM REFS =====
     const container = document.getElementById('linksContainer');
-    const setupModal = document.getElementById('setupModal');
-    const setupForm = document.getElementById('setupForm');
-    const setupBinId = document.getElementById('setupBinId');
-    const setupAccessKey = document.getElementById('setupAccessKey');
-    const setupModalClose = document.getElementById('setupModalClose');
-    const createBinBtn = document.getElementById('createBinBtn');
     const adminModal = document.getElementById('adminModal');
     const adminLinks = document.getElementById('adminLinks');
     const addLinkForm = document.getElementById('addLinkForm');
     const submitBtn = document.getElementById('submitBtn');
-    const saveBtn = document.getElementById('saveToJsonBinBtn');
-    const loadBtn = document.getElementById('loadFromJsonBinBtn');
     const themeToggle = document.getElementById('themeToggle');
     const themeText = document.getElementById('themeText');
     const toast = document.getElementById('toast');
-    const statusDot = document.getElementById('statusDot');
-    const statusText = document.getElementById('statusText');
-    const statusBadge = document.getElementById('statusBadge');
-    const setupBtn = document.getElementById('setupBtn');
 
     // ===== FUNGSI JSONBIN =====
 
-    // Simpan ke JSONBin
     function saveToJsonBin(data) {
       if (isSaving) return;
-      const config = getConfig();
-      if (!config.accessKey) {
-        showToast('⚠️ Setup database dulu! Klik tombol Setup Database.', 'error');
-        setupModal.classList.add('active');
-        return;
-      }
-
-      if (!config.binId) {
-        showToast('⚠️ Belum ada Bin! Klik "Buat Bin Baru Otomatis".', 'error');
-        setupModal.classList.add('active');
-        return;
-      }
-
       if (!data || data.length === 0) {
         showToast('⚠️ Tidak ada data untuk disimpan!', 'error');
         return;
       }
 
       isSaving = true;
-      setStatus('saving', 'Menyimpan...');
       showToast('💾 Menyimpan ke database...', 'loading');
 
       const payload = data.map(item => ({
@@ -804,11 +578,11 @@
         icon: item.icon || getDefaultIcon(item.title)
       }));
 
-      fetch(`https://api.jsonbin.io/v3/b/${config.binId}`, {
+      fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.BIN_ID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'X-Master-Key': config.accessKey,
+          'X-Master-Key': JSONBIN_CONFIG.ACCESS_KEY,
           'X-Bin-Name': 'linktree-data'
         },
         body: JSON.stringify(payload)
@@ -826,55 +600,32 @@
         return JSON.parse(text);
       })
       .then(() => {
-        setStatus('online', 'Tersimpan!');
-        showToast('✅ Data berhasil disimpan ke database!', 'success');
+        showToast('✅ Data berhasil disimpan!', 'success');
         isSaving = false;
       })
       .catch(error => {
-        setStatus('error', 'Error');
         showToast('⚠️ Gagal menyimpan: ' + error.message, 'error');
         isSaving = false;
         console.error('❌ Error save:', error);
-        
-        // Jika error karena bin invalid, arahkan ke setup
-        if (error.message.includes('invalid') || error.message.includes('not found')) {
-          showToast('⚠️ Bin ID tidak valid. Buat bin baru!', 'error');
-          setupModal.classList.add('active');
-        }
       });
     }
 
-    // Load dari JSONBin
     function loadFromJsonBin() {
-      const config = getConfig();
-      if (!config.accessKey) {
-        showToast('⚠️ Setup database dulu! Klik tombol Setup Database.', 'error');
-        setupModal.classList.add('active');
-        return;
-      }
+      showToast('📥 Memuat data...', 'loading');
 
-      if (!config.binId) {
-        showToast('⚠️ Belum ada Bin! Klik "Buat Bin Baru Otomatis".', 'error');
-        setupModal.classList.add('active');
-        return;
-      }
-
-      setStatus('saving', 'Memuat...');
-      showToast('📥 Memuat data dari database...', 'loading');
-
-      fetch(`https://api.jsonbin.io/v3/b/${config.binId}`, {
+      fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.BIN_ID}`, {
         method: 'GET',
         headers: {
-          'X-Master-Key': config.accessKey
+          'X-Master-Key': JSONBIN_CONFIG.ACCESS_KEY
         }
       })
       .then(async response => {
         const text = await response.text();
         if (!response.ok) {
           if (response.status === 404) {
-            throw new Error('Bin tidak ditemukan. Buat bin baru!');
+            throw new Error('Bin tidak ditemukan!');
           }
-          throw new Error(`HTTP ${response.status}: ${text.substring(0, 100)}`);
+          throw new Error(`HTTP ${response.status}`);
         }
         return JSON.parse(text);
       })
@@ -892,14 +643,10 @@
             icon: item.icon || getDefaultIcon(item.title)
           }));
           renderAll();
-          setStatus('online', 'Online');
-          statusBadge.textContent = '✅ Database Online';
-          showToast(`✅ ${links.length} link dimuat dari database!`, 'success');
+          showToast(`✅ ${links.length} link dimuat!`, 'success');
         } else {
           links = getDefaultLinks();
           renderAll();
-          setStatus('online', 'Online');
-          statusBadge.textContent = '📦 Database Kosong';
           showToast('⚠️ Database kosong, pakai data default', 'error');
         }
       })
@@ -907,90 +654,8 @@
         console.warn('❌ Error load:', error);
         links = getDefaultLinks();
         renderAll();
-        setStatus('online', 'Online');
-        statusBadge.textContent = '📦 Data Default';
         showToast('📦 ' + error.message, 'error');
-        
-        // Jika error karena bin tidak ditemukan, arahkan ke setup
-        if (error.message.includes('tidak ditemukan')) {
-          setupModal.classList.add('active');
-        }
       });
-    }
-
-    // Buat Bin Baru di JSONBin
-    function createNewBin() {
-      const accessKey = setupAccessKey.value.trim();
-      if (!accessKey) {
-        showToast('⚠️ Masukkan Access Key dulu!', 'error');
-        setupAccessKey.focus();
-        return;
-      }
-
-      setStatus('saving', 'Membuat bin...');
-      showToast('📦 Membuat database baru...', 'loading');
-
-      const defaultData = getDefaultLinks();
-
-      fetch('https://api.jsonbin.io/v3/b', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': accessKey,
-          'X-Bin-Name': 'linktree-data',
-          'X-Bin-Private': 'false'
-        },
-        body: JSON.stringify(defaultData)
-      })
-      .then(async response => {
-        const text = await response.text();
-        if (!response.ok) {
-          let errorMsg = `HTTP ${response.status}`;
-          try {
-            const errorData = JSON.parse(text);
-            if (errorData.message) errorMsg = errorData.message;
-          } catch (e) {}
-          throw new Error(errorMsg);
-        }
-        return JSON.parse(text);
-      })
-      .then(data => {
-        const newBinId = data.id;
-        
-        // Simpan Bin ID ke config
-        saveConfig(newBinId, accessKey);
-        
-        // Update form
-        setupBinId.value = newBinId;
-        
-        showToast(`✅ Bin baru dibuat! ID: ${newBinId}`, 'success');
-        setStatus('online', 'Online');
-        statusBadge.textContent = '✅ Database Siap';
-        
-        // Muat ulang data
-        loadFromJsonBin();
-        
-        // Tutup setup modal
-        setTimeout(() => {
-          setupModal.classList.remove('active');
-        }, 1500);
-      })
-      .catch(error => {
-        setStatus('error', 'Error');
-        showToast('⚠️ Gagal membuat bin: ' + error.message, 'error');
-        console.error('❌ Error create bin:', error);
-        
-        // Jika error karena access key invalid
-        if (error.message.includes('401') || error.message.includes('unauthorized')) {
-          showToast('⚠️ Access Key tidak valid! Periksa kembali.', 'error');
-        }
-      });
-    }
-
-    // ===== STATUS =====
-    function setStatus(type, text) {
-      statusDot.className = 'status-dot ' + type;
-      statusText.textContent = text;
     }
 
     // ===== FUNGSI LAIN =====
@@ -1142,40 +807,6 @@
       saveToJsonBin(links);
     });
 
-    // ===== SETUP FORM =====
-    setupForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const accessKey = setupAccessKey.value.trim();
-      const binId = setupBinId.value.trim();
-
-      if (!accessKey) {
-        showToast('⚠️ Access Key wajib diisi!', 'error');
-        return;
-      }
-
-      // Simpan config
-      if (binId) {
-        saveConfig(binId, accessKey);
-        showToast('✅ Konfigurasi tersimpan! Memuat data...', 'success');
-        loadFromJsonBin();
-        setTimeout(() => setupModal.classList.remove('active'), 1500);
-      } else {
-        // Jika tidak ada Bin ID, buat baru
-        createNewBin();
-      }
-    });
-
-    // ===== CREATE BIN BUTTON =====
-    createBinBtn.addEventListener('click', function() {
-      const accessKey = setupAccessKey.value.trim();
-      if (!accessKey) {
-        showToast('⚠️ Masukkan Access Key dulu!', 'error');
-        setupAccessKey.focus();
-        return;
-      }
-      createNewBin();
-    });
-
     // ===== DARK MODE =====
     function applyTheme() {
       if (isDarkMode) {
@@ -1196,25 +827,6 @@
     });
 
     // ===== MODAL CONTROLS =====
-    setupBtn.addEventListener('click', () => {
-      const config = getConfig();
-      if (config.accessKey) {
-        setupAccessKey.value = config.accessKey;
-      }
-      if (config.binId) {
-        setupBinId.value = config.binId;
-      }
-      setupModal.classList.add('active');
-    });
-
-    setupModalClose.addEventListener('click', () => {
-      setupModal.classList.remove('active');
-    });
-
-    setupModal.addEventListener('click', (e) => {
-      if (e.target === setupModal) setupModal.classList.remove('active');
-    });
-
     document.getElementById('adminToggle').addEventListener('click', () => {
       adminModal.classList.add('active');
       renderAdminLinks();
@@ -1228,15 +840,6 @@
       if (e.target === adminModal) adminModal.classList.remove('active');
     });
 
-    // ===== SAVE & LOAD BUTTONS =====
-    saveBtn.addEventListener('click', () => {
-      saveToJsonBin(links);
-    });
-
-    loadBtn.addEventListener('click', () => {
-      loadFromJsonBin();
-    });
-
     // ===== TOAST =====
     let toastTimeout;
 
@@ -1245,7 +848,7 @@
       toast.className = 'toast ' + type;
       toast.classList.add('show');
       clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
     // ===== SETUP PROFIL =====
@@ -1278,24 +881,16 @@
       setupSocial();
       applyTheme();
 
-      // Cek config
-      const config = getConfig();
-      if (config.accessKey && config.binId) {
-        statusBadge.textContent = '📡 Menghubungkan...';
-        loadFromJsonBin();
-      } else if (config.accessKey && !config.binId) {
-        statusBadge.textContent = '📦 Setup Bin ID';
-        showToast('📦 Masukkan Bin ID atau buat bin baru!', 'error');
+      // Cek apakah config sudah diisi
+      if (JSONBIN_CONFIG.BIN_ID === '6a44c8c1f5f4af5e294bee70' || 
+          JSONBIN_CONFIG.ACCESS_KEY === '$2a$10$X7cSv4iZ2Mj.7/YyJchoK.ZAe9xYEQfG9ka5V.hDdsUUpqcTgwKaS') {
+        showToast('⚠️ Ganti BIN_ID dan ACCESS_KEY di kode!', 'error');
         links = getDefaultLinks();
         renderAll();
-        setStatus('offline', 'Perlu Setup');
-      } else {
-        statusBadge.textContent = '⚙️ Setup Database';
-        showToast('⚙️ Klik "Setup Database" untuk mulai!', 'error');
-        links = getDefaultLinks();
-        renderAll();
-        setStatus('offline', 'Perlu Setup');
+        return;
       }
+
+      loadFromJsonBin();
     }
 
     document.addEventListener('DOMContentLoaded', init);

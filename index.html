@@ -445,6 +445,8 @@
       pointer-events: none;
       background: #1a202c;
       color: white;
+      max-width: 90%;
+      text-align: center;
     }
     .toast.show {
       opacity: 1;
@@ -474,6 +476,7 @@
     }
     .status-dot.online { background: #48bb78; }
     .status-dot.saving { background: #f6ad55; animation: pulse 1s infinite; }
+    .status-dot.error { background: #fc8181; }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; }
@@ -570,7 +573,7 @@
 
     <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
       <button class="btn-primary" id="saveToJsonBinBtn" style="flex:1; background:#48bb78;">
-        💾 Simpan Otomatis ke Database
+        💾 Simpan ke Database
       </button>
       <button class="btn-primary" id="loadFromJsonBinBtn" style="flex:1; background:#667eea;">
         📥 Muat Ulang Data
@@ -633,27 +636,51 @@
 
     // ===== FUNGSI JSONBIN =====
 
-    // Simpan ke JSONBin
+    // Simpan ke JSONBin (FIXED!)
     function saveToJsonBin(data) {
       if (isSaving) return;
+      if (!data || data.length === 0) {
+        showToast('⚠️ Tidak ada data untuk disimpan!', 'error');
+        return;
+      }
+
       isSaving = true;
       setStatus('saving', 'Menyimpan...');
+      showToast('💾 Menyimpan ke database...', 'loading');
 
-      const payload = {
-        record: data
-      };
+      // Format data yang benar untuk JSONBin
+      const payload = data.map(item => ({
+        id: item.id || Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+        title: item.title || 'Link',
+        url: item.url || '#',
+        icon: item.icon || getDefaultIcon(item.title)
+      }));
+
+      console.log('📤 Mengirim data ke JSONBin:', payload);
 
       fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.BIN_ID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'X-Master-Key': JSONBIN_CONFIG.ACCESS_KEY
+          'X-Master-Key': JSONBIN_CONFIG.ACCESS_KEY,
+          'X-Bin-Name': 'linktree-data'
         },
         body: JSON.stringify(payload)
       })
-      .then(response => {
-        if (!response.ok) throw new Error('Gagal menyimpan: ' + response.status);
-        return response.json();
+      .then(async response => {
+        const text = await response.text();
+        console.log('📥 Response status:', response.status);
+        console.log('📥 Response body:', text);
+        
+        if (!response.ok) {
+          let errorMsg = `HTTP ${response.status}`;
+          try {
+            const errorData = JSON.parse(text);
+            if (errorData.message) errorMsg = errorData.message;
+          } catch (e) {}
+          throw new Error(errorMsg);
+        }
+        return JSON.parse(text);
       })
       .then(() => {
         setStatus('online', 'Tersimpan!');
@@ -664,27 +691,45 @@
         setStatus('error', 'Error');
         showToast('⚠️ Gagal menyimpan: ' + error.message, 'error');
         isSaving = false;
-        console.error(error);
+        console.error('❌ Error save:', error);
       });
     }
 
-    // Load dari JSONBin
+    // Load dari JSONBin (FIXED!)
     function loadFromJsonBin() {
       setStatus('saving', 'Memuat...');
       showToast('📥 Memuat data dari database...', 'loading');
 
+      console.log('📤 Memuat dari JSONBin...');
+
       fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.BIN_ID}`, {
+        method: 'GET',
         headers: {
           'X-Master-Key': JSONBIN_CONFIG.ACCESS_KEY
         }
       })
-      .then(response => {
-        if (!response.ok) throw new Error('Gagal memuat: ' + response.status);
-        return response.json();
+      .then(async response => {
+        const text = await response.text();
+        console.log('📥 Response status:', response.status);
+        console.log('📥 Response body:', text.substring(0, 200) + '...');
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Bin tidak ditemukan. Buat bin baru di JSONBin!');
+          }
+          throw new Error(`HTTP ${response.status}`);
+        }
+        return JSON.parse(text);
       })
       .then(data => {
-        const records = data.record;
-        if (records && Array.isArray(records) && records.length > 0) {
+        // JSONBin v3 mengembalikan { record: [...] }
+        let records = data.record || data;
+        
+        if (!Array.isArray(records)) {
+          records = [records];
+        }
+
+        if (records && records.length > 0 && records[0] && typeof records[0] === 'object') {
           links = records.map(item => ({
             id: item.id || Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
             title: item.title || 'Link',
@@ -693,7 +738,7 @@
           }));
           renderAll();
           setStatus('online', 'Online');
-          showToast('✅ Data berhasil dimuat!', 'success');
+          showToast(`✅ ${links.length} link dimuat dari database!`, 'success');
         } else {
           // Jika kosong, pakai default
           links = getDefaultLinks();
@@ -703,12 +748,52 @@
         }
       })
       .catch(error => {
-        // Jika gagal (bin belum ada), buat baru
-        console.warn('Gagal load, buat data baru:', error);
+        console.warn('❌ Error load:', error);
+        // Jika gagal, pakai default
         links = getDefaultLinks();
         renderAll();
         setStatus('online', 'Online');
-        showToast('📦 Database baru dibuat, simpan sekarang!', 'success');
+        showToast('📦 ' + error.message, 'error');
+      });
+    }
+
+    // Buat Bin Baru di JSONBin (jika belum ada)
+    function createNewBin() {
+      setStatus('saving', 'Membuat bin...');
+      showToast('📦 Membuat database baru...', 'loading');
+
+      const defaultData = getDefaultLinks();
+
+      fetch('https://api.jsonbin.io/v3/b', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': JSONBIN_CONFIG.ACCESS_KEY,
+          'X-Bin-Name': 'linktree-data'
+        },
+        body: JSON.stringify(defaultData)
+      })
+      .then(async response => {
+        const text = await response.text();
+        console.log('📥 Create response:', text);
+        if (!response.ok) throw new Error('Gagal membuat bin');
+        return JSON.parse(text);
+      })
+      .then(data => {
+        const newBinId = data.id;
+        showToast(`✅ Bin baru dibuat! ID: ${newBinId}`, 'success');
+        setStatus('online', 'Online');
+        
+        // Update konfigurasi
+        JSONBIN_CONFIG.BIN_ID = newBinId;
+        showToast('📝 Copy Bin ID ini ke kode Anda: ' + newBinId, 'success');
+        
+        // Muat ulang data
+        loadFromJsonBin();
+      })
+      .catch(error => {
+        setStatus('error', 'Error');
+        showToast('⚠️ Gagal membuat bin: ' + error.message, 'error');
       });
     }
 
@@ -902,10 +987,18 @@
 
     // ===== SAVE & LOAD BUTTONS =====
     saveBtn.addEventListener('click', () => {
+      if (JSONBIN_CONFIG.BIN_ID === 'YOUR_BIN_ID') {
+        showToast('⚠️ Setup JSONBin dulu!', 'error');
+        return;
+      }
       saveToJsonBin(links);
     });
 
     loadBtn.addEventListener('click', () => {
+      if (JSONBIN_CONFIG.BIN_ID === 'YOUR_BIN_ID') {
+        showToast('⚠️ Setup JSONBin dulu!', 'error');
+        return;
+      }
       loadFromJsonBin();
     });
 
@@ -917,7 +1010,7 @@
       toast.className = 'toast ' + type;
       toast.classList.add('show');
       clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
     }
 
     // ===== SETUP PROFIL =====

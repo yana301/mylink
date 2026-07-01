@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>LinkList · penyimpan daftar link</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f7f9fc 0%, #eef2f7 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .container {
+      max-width: 720px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 48px;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.2), 0 8px 24px -6px rgba(0, 0, 0, 0.05);
+      padding: 2rem 1.8rem;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #0b1b2f;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .subhead {
+      font-size: 0.95rem;
+      color: #4a5b6e;
+      margin-bottom: 2rem;
+      border-left: 4px solid #3b82f6;
+      padding-left: 1rem;
+      background: rgba(59, 130, 246, 0.06);
+      border-radius: 0 12px 12px 0;
+      font-weight: 400;
+    }
+
+    .form-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem 1.2rem;
+      box-shadow: 0 6px 18px rgba(0, 20, 40, 0.06);
+      margin-bottom: 2.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      transition: box-shadow 0.2s;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .input-group input {
+      flex: 1 1 140px;
+      padding: 0.85rem 1rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 60px;
+      font-size: 0.95rem;
+      background: #fafcff;
+      transition: 0.2s;
+      outline: none;
+      color: #0b1b2f;
+    }
+
+    .input-group input:focus {
+      border-color: #3b82f6;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+    }
+
+    .input-group input::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    .btn {
+      background: #0b1b2f;
+      border: none;
+      padding: 0.85rem 1.6rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+      border: 1px solid transparent;
+      box-shadow: 0 4px 10px rgba(11, 27, 47, 0.08);
+    }
+
+    .btn-primary {
+      background: #1e293b;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0f172a;
+      transform: scale(0.97);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-danger {
+      background: #f1f5f9;
+      color: #b91c1c;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      border-radius: 40px;
+      border: 1px solid #e2e8f0;
+      box-shadow: none;
+    }
+
+    .btn-danger:hover {
+      background: #fee2e2;
+      border-color: #fecaca;
+      transform: scale(0.96);
+    }
+
+    .btn-success {
+      background: #dcfce7;
+      color: #166534;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      border-radius: 40px;
+      border: 1px solid #bbf7d0;
+      box-shadow: none;
+    }
+
+    .btn-success:hover {
+      background: #bbf7d0;
+      border-color: #86efac;
+      transform: scale(0.96);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid #d0d9e6;
+      color: #1e293b;
+      padding: 0.5rem 1.2rem;
+      font-weight: 500;
+    }
+
+    .btn-outline:hover {
+      background: #eef2f7;
+      border-color: #94a3b8;
+    }
+
+    .link-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.8rem;
+    }
+
+    .link-list-header h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #0b1b2f;
+    }
+
+    .link-counter {
+      background: #e2e8f0;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #1e293b;
+    }
+
+    .link-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      margin-top: 0.3rem;
+    }
+
+    .link-item {
+      background: white;
+      border-radius: 60px;
+      padding: 0.4rem 0.4rem 0.4rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      border: 1px solid #eef2f7;
+      transition: all 0.15s;
+      backdrop-filter: blur(4px);
+    }
+
+    .link-item:hover {
+      border-color: #cbd5e1;
+      background: #ffffff;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.02);
+    }
+
+    .link-info {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.3rem 0.8rem;
+      flex: 1 1 200px;
+      min-width: 140px;
+    }
+
+    .link-title {
+      font-weight: 600;
+      color: #0b1b2f;
+      font-size: 1rem;
+      word-break: break-word;
+      max-width: 260px;
+    }
+
+    .link-url {
+      font-size: 0.8rem;
+      color: #4b5b70;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      word-break: break-all;
+      opacity: 0.8;
+      transition: opacity 0.1s;
+      border-bottom: 1px dotted transparent;
+    }
+
+    .link-url:hover {
+      opacity: 1;
+      color: #2563eb;
+      border-bottom-color: #2563eb;
+    }
+
+    .link-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      flex-shrink: 0;
+    }
+
+    .empty-state {
+      background: #f8fafc;
+      border-radius: 60px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: #64748b;
+      border: 1.5px dashed #dce2ec;
+      font-size: 0.95rem;
+    }
+
+    .empty-state span {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .footer-actions {
+      margin-top: 1.8rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 1.5rem;
+    }
+
+    .footer-actions .left-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .toast-message {
+      background: #0b1b2f;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 60px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.2s ease;
+      pointer-events: none;
+      z-index: 999;
+      backdrop-filter: blur(8px);
+      background: rgba(11, 27, 47, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .toast-message.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-0.5rem);
+    }
+
+    @media (max-width: 550px) {
+      .container {
+        padding: 1.5rem 1rem;
+        border-radius: 32px;
+      }
+      .input-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .link-item {
+        padding: 0.8rem 0.8rem 0.8rem 1.2rem;
+        border-radius: 30px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .link-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.2rem;
+      }
+      .link-title {
+        max-width: 100%;
+        font-size: 1rem;
+      }
+      .link-url {
+        font-size: 0.8rem;
+      }
+      .link-actions {
+        justify-content: flex-end;
+        margin-top: 0.2rem;
+      }
+      .footer-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .footer-actions .left-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" role="main">
+  <header>
+    <h1>📎 LinkList</h1>
+    <div class="subhead">simpan &amp; bagikan tautan pentingmu</div>
+  </header>
+
+  <!-- form tambah link -->
+  <div class="form-card">
+    <form id="linkForm" class="form-row" autocomplete="off">
+      <div class="input-group">
+        <input type="text" id="titleInput" placeholder="Judul (contoh: Google)" aria-label="Judul link" required>
+        <input type="url" id="linkInput" placeholder="https:// contoh.com" aria-label="Masukkan URL" required>
+        <button type="submit" class="btn btn-primary">➕ Tambah</button>
+      </div>
+      <small style="color:#64748b; font-size:0.75rem; padding-left:0.5rem;">✏️ judul &amp; URL wajib diisi</small>
+    </form>
+  </div>
+
+  <!-- daftar link -->
+  <div class="link-list-header">
+    <h2>📋 Daftar Link</h2>
+    <span class="link-counter" id="linkCounter">0 tautan</span>
+  </div>
+
+  <div id="linkContainer" class="link-grid">
+    <!-- placeholder empty state -->
+    <div class="empty-state" id="emptyState">
+      <span>📭</span>
+      belum ada link, tambahkan sekarang!
+    </div>
+  </div>
+
+  <!-- aksi tambahan -->
+  <div class="footer-actions">
+    <div class="left-group">
+      <button id="exportBtn" class="btn btn-success" type="button">📤 Ekspor Data</button>
+      <button id="importBtn" class="btn btn-outline" type="button">📥 Impor Data</button>
+      <input type="file" id="fileInput" accept=".json" style="display:none;">
+    </div>
+    <button id="clearAllBtn" class="btn btn-danger" type="button">🗑️ Hapus semua</button>
+  </div>
+</div>
+
+<!-- toast notifikasi -->
+<div id="toast" class="toast-message">✨ link tersimpan</div>
+
+<script>
+  (function() {
+    'use strict';
+
+    // ---- state ----
+    let links = [];
+
+    // ---- DOM refs ----
+    const form = document.getElementById('linkForm');
+    const titleInput = document.getElementById('titleInput');
+    const linkInput = document.getElementById('linkInput');
+    const linkContainer = document.getElementById('linkContainer');
+    const emptyState = document.getElementById('emptyState');
+    const linkCounter = document.getElementById('linkCounter');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const importBtn = document.getElementById('importBtn');
+    const fileInput = document.getElementById('fileInput');
+    const toast = document.getElementById('toast');
+
+    // ---- helper: simpan ke localStorage ----
+    function saveToStorage() {
+      try {
+        localStorage.setItem('linklist_data', JSON.stringify(links));
+      } catch (_) { /* ignore */ }
+    }
+
+    // ---- helper: muat dari localStorage ----
+    function loadFromStorage() {
+      try {
+        const raw = localStorage.getItem('linklist_data');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length) {
+            const valid = parsed.every(item => item.title && item.url && item.id);
+            if (valid) {
+              links = parsed;
+              return;
+            }
+          }
+        }
+        // data default
+        links = [
+          { id: 'gh', title: 'GitHub', url: 'https://github.com' },
+          { id: 'tw', title: 'Twitter / X', url: 'https://twitter.com' },
+          { id: 'yt', title: 'YouTube', url: 'https://youtube.com' },
+        ];
+      } catch (_) {
+        links = [
+          { id: 'gh', title: 'GitHub', url: 'https://github.com' },
+          { id: 'tw', title: 'Twitter / X', url: 'https://twitter.com' },
+        ];
+      }
+    }
+
+    // ---- generate id ----
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    }
+
+    // ---- render ----
+    function renderLinks() {
+      while (linkContainer.firstChild) {
+        linkContainer.removeChild(linkContainer.firstChild);
+      }
+
+      if (links.length === 0) {
+        const emptyClone = emptyState.cloneNode(true);
+        emptyClone.id = 'emptyState';
+        linkContainer.appendChild(emptyClone);
+        linkCounter.textContent = '0 tautan';
+        return;
+      }
+
+      linkCounter.textContent = links.length + ' tautan';
+
+      links.forEach((item) => {
+        const linkItem = document.createElement('div');
+        linkItem.className = 'link-item';
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'link-info';
+
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'link-title';
+        titleSpan.textContent = item.title || 'Tanpa judul';
+
+        const urlAnchor = document.createElement('a');
+        urlAnchor.className = 'link-url';
+        urlAnchor.href = item.url;
+        urlAnchor.target = '_blank';
+        urlAnchor.rel = 'noopener noreferrer';
+        urlAnchor.textContent = item.url;
+
+        infoDiv.appendChild(titleSpan);
+        infoDiv.appendChild(urlAnchor);
+
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'link-actions';
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-danger';
+        deleteBtn.textContent = 'Hapus';
+        deleteBtn.setAttribute('type', 'button');
+        deleteBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          deleteLinkById(item.id);
+        });
+
+        actionsDiv.appendChild(deleteBtn);
+        linkItem.appendChild(infoDiv);
+        linkItem.appendChild(actionsDiv);
+
+        linkContainer.appendChild(linkItem);
+      });
+    }
+
+    // ---- hapus link ----
+    function deleteLinkById(id) {
+      const initialLength = links.length;
+      links = links.filter(link => link.id !== id);
+      if (links.length !== initialLength) {
+        saveToStorage();
+        renderLinks();
+        showToast('🗑️ link dihapus');
+      } else {
+        showToast('⚠️ link tidak ditemukan', true);
+      }
+    }
+
+    // ---- tambah link ----
+    function addLink(title, url) {
+      const cleanTitle = title.trim();
+      let cleanUrl = url.trim();
+
+      if (!cleanTitle) {
+        showToast('⚠️ judul tidak boleh kosong', true);
+        return false;
+      }
+
+      if (!cleanUrl) {
+        showToast('⚠️ URL tidak boleh kosong', true);
+        return false;
+      }
+
+      if (!/^https?:\/\//i.test(cleanUrl)) {
+        cleanUrl = 'https://' + cleanUrl;
+      }
+
+      try {
+        new URL(cleanUrl);
+      } catch (_) {
+        showToast('⚠️ format URL tidak valid', true);
+        return false;
+      }
+
+      const newLink = {
+        id: generateId(),
+        title: cleanTitle,
+        url: cleanUrl,
+      };
+
+      links.push(newLink);
+      saveToStorage();
+      renderLinks();
+      showToast('✅ link tersimpan!');
+      return true;
+    }
+
+    // ---- hapus semua ----
+    function clearAllLinks() {
+      if (links.length === 0) {
+        showToast('📭 sudah kosong', true);
+        return;
+      }
+      if (window.confirm('Hapus semua link yang tersimpan?')) {
+        links = [];
+        saveToStorage();
+        renderLinks();
+        showToast('🧹 semua link dihapus');
+      }
+    }
+
+    // ---- ekspor data ----
+    function exportData() {
+      if (links.length === 0) {
+        showToast('📭 tidak ada data untuk diekspor', true);
+        return;
+      }
+
+      const dataStr = JSON.stringify(links, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'linklist_data.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('📤 data berhasil diekspor!');
+    }
+
+    // ---- impor data ----
+    function importData(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (!Array.isArray(imported)) {
+            showToast('⚠️ format file tidak valid', true);
+            return;
+          }
+
+          // validasi setiap item
+          const valid = imported.every(item => item.title && item.url);
+          if (!valid) {
+            showToast('⚠️ data tidak lengkap (butuh title & url)', true);
+            return;
+          }
+
+          // generate id baru untuk setiap link
+          const newLinks = imported.map(item => ({
+            id: generateId(),
+            title: item.title,
+            url: item.url,
+          }));
+
+          // timpa data lama
+          links = newLinks;
+          saveToStorage();
+          renderLinks();
+          showToast('📥 data berhasil diimpor! (' + links.length + ' link)');
+        } catch (err) {
+          showToast('⚠️ gagal membaca file: ' + err.message, true);
+        }
+      };
+      reader.readAsText(file);
+      fileInput.value = ''; // reset input
+    }
+
+    // ---- toast ----
+    let toastTimeout = null;
+
+    function showToast(message, isWarning = false) {
+      toast.textContent = message;
+      toast.style.background = isWarning ? 'rgba(180, 40, 40, 0.92)' : 'rgba(11, 27, 47, 0.92)';
+      toast.classList.add('show');
+
+      if (toastTimeout) {
+        clearTimeout(toastTimeout);
+        toastTimeout = null;
+      }
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+        toastTimeout = null;
+      }, 2000);
+    }
+
+    // ---- event listeners ----
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const titleVal = titleInput.value;
+      const urlVal = linkInput.value;
+      const success = addLink(titleVal, urlVal);
+      if (success) {
+        titleInput.value = '';
+        linkInput.value = '';
+        titleInput.focus();
+      }
+    });
+
+    clearAllBtn.addEventListener('click', clearAllLinks);
+
+    exportBtn.addEventListener('click', exportData);
+
+    importBtn.addEventListener('click', function() {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function(e) {
+      if (this.files && this.files.length > 0) {
+        importData(this.files[0]);
+      }
+    });
+
+    // ---- inisialisasi ----
+    loadFromStorage();
+    renderLinks();
+    titleInput.focus();
+
+  })();
+</script>
+
+</body>
+</html>
